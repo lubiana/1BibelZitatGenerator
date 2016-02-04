@@ -1,0 +1,53 @@
+% layout 'default';
+% title 'Welcome';
+<body ng-app="myapp">
+
+<div class="site-wrapper">
+  <div class="site-wrapper-inner">
+    <div class="cover-container">
+      <div class="inner cover" ng-controller="MyController" >
+        <!-- <h1 class="cover-heading">Full screen background cover page.</h1> -->
+
+        <p class="lead">
+            {{myData.fromServer}}
+        </p>
+
+        <p class="lead"><button class="btn btn-lg btn-info" ng-click="myData.doClick(item, $event)">Generiere</button></p>
+      </div>
+
+      <div class="mastfoot">
+        <div class="inner">
+          <!-- Validation -->
+          
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+
+  <script>
+    angular.module("myapp", [])
+        .controller("MyController", function($scope, $http) {
+            $scope.myData = {};
+            $scope.myData.doClick = function(item, event) {
+
+                var responsePromise = $http.get("/get", {
+                        headers: {
+                                'Content-Type': 'application/json; charset=UTF-8'
+                        }
+                });
+
+                responsePromise.success(function(data, status, headers, config) {
+                    //$scope.myData.fromServer = data.text + ' - ' + data.book + ', ' + data.chapter + ', ' + data.verse;
+                    $scope.myData.fromServer = data.text;
+                });
+                responsePromise.error(function(data, status, headers, config) {
+                    alert("AJAX failed!");
+                });
+            }
+
+
+        } );
+  </script>
+
+</body>
