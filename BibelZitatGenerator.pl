@@ -49,10 +49,7 @@ get '/get' => sub {
   $sth->execute;
 
   my $resultarray = $sth->fetchall_arrayref->[0];
-  my $text = $resultarray->[0];
-  my $chapter = $resultarray->[1];
-  my $verse = $resultarray->[2];
-  my $book = $resultarray->[3];
+  my ($text, $chapter, $verse, $book) = @{$resultarray};
 
   for my $replacement (keys %{$c->replacement}) {
     if(ref($c->replacement->{$replacement}) eq 'ARRAY') {
