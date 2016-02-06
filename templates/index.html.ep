@@ -9,10 +9,14 @@
         <!-- <h1 class="cover-heading">Full screen background cover page.</h1> -->
 
         <p class="lead">
-            {{myData.fromServer}}
+            {{myData.text}}
         </p>
+	<div ng-if="myData.save">
+            {{myData.save}}
+	</div>
 
         <p class="lead"><button class="btn btn-lg btn-info" ng-click="myData.doClick(item, $event)">Generiere</button></p>
+        <p class="lead"><button class="btn btn-lg btn-info" ng-click="myData.saveStuff(item, $event)">Teilen</button></p>
       </div>
 
       <div class="mastfoot">
@@ -29,6 +33,7 @@
     angular.module("myapp", [])
         .controller("MyController", function($scope, $http) {
             $scope.myData = {};
+            $scope.myData.text = '<%= $tokentext %>';
             $scope.myData.doClick = function(item, event) {
 
                 var responsePromise = $http.get("/get", {
@@ -39,7 +44,22 @@
 
                 responsePromise.success(function(data, status, headers, config) {
                     //$scope.myData.fromServer = data.text + ' - ' + data.book + ', ' + data.chapter + ', ' + data.verse;
-                    $scope.myData.fromServer = data.text;
+                    $scope.myData.response = data;
+                    $scope.myData.text = data.text;
+                });
+                responsePromise.error(function(data, status, headers, config) {
+                    alert("AJAX failed!");
+                });
+            }
+            $scope.myData.saveStuff = function(item, event) {
+
+                var responsePromise = $http.post("/save", {
+			token: $scope.myData.response.token
+                });
+
+                responsePromise.success(function(data, status, headers, config) {
+                    //$scope.myData.fromServer = data.text + ' - ' + data.book + ', ' + data.chapter + ', ' + data.verse;
+                    $scope.myData.save = $scope.myData.response.token;
                 });
                 responsePromise.error(function(data, status, headers, config) {
                     alert("AJAX failed!");
