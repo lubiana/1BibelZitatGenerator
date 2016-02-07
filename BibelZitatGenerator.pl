@@ -72,12 +72,6 @@ get '/get' => sub {
   my ($id, $text, $chapter, $verse, $book) = @{$resultarray};
 
   my $token = Session::Token->new()->get;
-  #$c->redis->hset( $token => { 
-#	text => $text,
-#	id => $id
-#  });
-  $c->redis->hset( $token, 'text', $text);
-  $c->redis->hset( $token, 'id', $id);
 
   for my $replacement (keys %{$c->replacement}) {
     if(ref($c->replacement->{$replacement}) eq 'ARRAY') {
@@ -86,6 +80,9 @@ get '/get' => sub {
       $text =~ s/$replacement/$c->replacement->{$replacement}/gee;
     }
   }
+
+  $c->redis->hset( $token, 'text', $text);
+  $c->redis->hset( $token, 'id', $id);
 
   $c->render(json => { 
     'text' => $text,
